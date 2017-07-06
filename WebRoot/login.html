@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>人证合一管理系统</title>
+    <meta charset="GBK" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+    <link rel="stylesheet" href="css/datepicker.css" />
+    <link rel="stylesheet" href="css/jquery-ui.css" />
+    <link rel="stylesheet" href="css/uniform.css" />
+    <link rel="stylesheet" href="css/select2.css" />
+    <link rel="stylesheet" href="css/unicorn.main.css" />
+    <link rel="stylesheet" href="css/unicorn.grey.css" class="skin-color" />
+
+    <script src="js/my.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        var pageindex = 0;
+        var pagecount = 4;
+        $(document).ready(function() {
+            var formatted_date = new Date().Format("yyyy-MM-dd");
+            //$('#visitdate')[0].value = formatted_date;
+        });
+        function resetdate() {
+            $('#visitdate')[0].value = "";
+        }
+        function nextpage(){
+            pageindex++;
+            queryid(pageindex);
+        }
+        function previous(){
+            pageindex--;
+            queryid(pageindex);
+        }
+
+        function queryid(pindex) {
+            $('tbody').empty();
+            $('#visitquery').ajaxSubmit(
+                {
+                    type : 'post',
+                    url : 'http://localhost:8080/login.do',
+                    dataType:'json',
+                    data:{uid:$('#uid').val(),pwd:$('#pwd').val()},
+                    success:function(data){
+                    		if (data == 0){
+                    			alert("登录成功");
+                    		}else{
+                    			alert("登录失败");
+                    		}
+  								           
+                        },
+                    error:function(data,status,e){
+                        alert('错误');
+                    }
+                });
+
+       
+            /* fetch("http://127.0.0.1:8080/pidsys/login.do",{
+                method:'POST',
+                mode: "no-cors",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+                },
+                body: "uid="+$('#uid').val()+"&pwd="+$('#pwd').val()+"&userstate="+$('#userstate').val()
+            }).then((res)=>{
+                console.log(res);
+            }).catch((e)=>{
+                console.log('错误'+e);
+            }); */
+
+
+
+
+        }
+    </script>
+</head>
+
+<body>
+<div id="header">
+    <h1>人证合一管理系统</h1>
+</div>
+<div id="search">
+    <input type="text" placeholder="Search here..."/><button type="submit" class="tip-right"><i class="icon-search icon-white"></i></button>
+</div>
+<div id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav btn-group">
+        <li class="btn btn-inverse" ><a title="" href="#"><i class="icon icon-user"></i> <span class="text">个人资料</span></a></li>
+        <li class="btn btn-inverse dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages" class="dropdown-toggle"><i class="icon icon-envelope"></i> <span class="text">待办事项</span> <span class="label label-important">3</span> <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li><a class="sAdd" title="" href="#">新增待办</a></li>
+                <li><a class="sInbox" title="" href="#">待办事项</a></li>
+                <li><a class="sOutbox" title="" href="#">已办事项</a></li>
+            </ul>
+        </li>
+        <li class="btn btn-inverse"><a title="" href="#"><i class="icon icon-cog"></i> <span class="text">系统设置</span></a></li>
+        <li class="btn btn-inverse"><a title="" href="#"><i class="icon icon-share-alt"></i> <span class="text">登出</span></a></li>
+    </ul>
+</div>
+<div id="sidebar">
+    <ul>
+        <li><a href="login.html"><i class="icon icon-home"></i> <span>访客记录</span></a></li>
+        <li class="submenu open">
+            <a href="#"><i class="icon icon-th-list"></i> <span>数据管理</span></a>
+            <ul>
+                <li><a href="#">登录账号</a></li>
+                <li><a href="./index.jsp">用户管理</a></li>
+                <li><a href="./blackList.html">黑名单管理</a></li>
+                <li><a href="./whiteList.html">白名单管理</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i class="icon icon-pencil"></i> <span>统计分析</span></a></li>
+    </ul>
+</div>
+
+<div id="content">
+    <div id="content-header">
+        <h1>账号登录</h1>
+    </div>
+    <div id="breadcrumb">
+        <a href="login.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a>
+        <a href="#" class="tip-bottom">数据管理</a>
+        <a href="#" class="tip-bottom">账号登录</a>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"> <i class="icon-align-justify"></i> </span>
+                        <h5>账号登录</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <form action="" method="post" class="form-horizontal" id="visitquery">
+                            <div class="control-group">
+                                <label class="control-label">账号：</label>
+                                <div class="controls">
+                                    <input id="uid" type="text" />
+                                </div>
+
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">密码：</label>
+                                <div class="controls">
+                                    <input id="pwd" type="text" />
+                                </div>
+                            </div>                     
+                            <div class="form-actions" align="right">
+                                <button type="button" class="btn btn-primary" onclick="queryid(0);">提交</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid" >
+            <div id="footer" class="span12">
+                2016 - 2017 &copy; 北京华智众联科技有限公司
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-form.js"></script>
+<script src="js/jquery-ui.custom.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-colorpicker.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/jquery.uniform.js"></script>
+<script src="js/select2.min.js"></script>
+<script src="js/unicorn.js"></script>
+<script src="js/unicorn.form_common.js"></script>
+
+</body>
+</html>

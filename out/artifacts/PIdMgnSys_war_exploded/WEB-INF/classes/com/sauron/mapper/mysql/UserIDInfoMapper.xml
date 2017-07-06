@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sauron.mapper.mysql.UserIDInfoMapper">
+
+	<resultMap type="com.sauron.model.UserIDInfo" id="idmapper_resultmap_useridinfo">
+		<result property="id" column="id" javaType="int" jdbcType="INTEGER" />
+		<result property="idbaseinfo" column="idbaseinfo" javaType="String" jdbcType="VARCHAR" />
+		<result property="idpicinfo" column="idpicinfo" javaType="String" jdbcType="VARCHAR"/>
+		<result property="similar" column="similar" javaType="double" jdbcType="DOUBLE" />
+		<result property="visitdate" column="visitdate" javaType="String" jdbcType="VARCHAR" />
+		<result property="blacklist" column="blacklist" javaType="int" jdbcType="INTEGER"/>
+	</resultMap>
+
+	<insert id="batchAddID" parameterType="java.util.List">
+		insert into pidrecord(idbaseinfo,idpicinfo,similar,visitdate) values
+		<foreach collection="list" item="item" index="index" separator=",">
+		(
+		#{item.idbaseinfo,jdbcType=VARCHAR},
+		#{item.idpicinfo,jdbcType=VARCHAR},
+		#{item.similar,jdbcType=DOUBLE},
+		#{item.visitdate,jdbcType=VARCHAR}
+		)
+		</foreach>
+	</insert>
+	
+	<insert id="addID" parameterType="com.sauron.model.UserIDInfo">
+		insert into pidrecord(idbaseinfo,idpicinfo,similar,visitdate,blacklist) values(
+		#{idbaseinfo,jdbcType=VARCHAR},
+		#{idpicinfo, jdbcType=VARCHAR},
+		#{similar,jdbcType=DOUBLE},
+		#{visitdate,jdbcType=VARCHAR},
+		#{blacklist,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<delete id="deleteID">
+		delete from pidrecord where id=#{id}
+	</delete>
+	
+	<select id="getIDSize">
+		select count(1) cnt from pidrecord
+	</select>
+	
+	<select id="getIDAtPage" resultType="java.util.HashMap">
+		select * from pidrecord order by visitdate desc limit #{offset},#{pagecount}
+	</select>
+	
+	<select id="getIDs" resultType="java.util.HashMap">
+		select * from pidrecord t order by t.visitdate desc
+	</select>
+	
+	<select id="getIDsBydateAndName" resultType="java.util.HashMap">
+		select * from pidrecord t where 1=1 
+		<if test="qname!=null and qname!=''">
+			and t.idbaseinfo like concat(#{qname},'%')
+		</if>
+		<if test="qdate!=null and qdate!=''">
+			and t.visitdate like concat(#{qdate},'%')
+		</if>
+		order by t.visitdate desc
+		limit #{offset},#{pagecount}
+	</select>
+	<select id="getIDsByBlacklist" resultType="java.util.HashMap">
+		SELECT * FROM pidrecord t WHERE blacklist=#{blacklist}
+	</select>
+</mapper>

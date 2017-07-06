@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sauron.mapper.mysql.blacklistInfoMapper">
+
+    <resultMap type="com.sauron.model.blacklistInfo" id="blacklistmapper_resultmap_blacklistinfo">
+        <result property="idnum" column="idnum" javaType="String" jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String" jdbcType="VARCHAR" />
+        <result property="blackname" column="blackname" javaType="String" jdbcType="VARCHAR"/>
+        <result property="blackdate" column="blackdate" javaType="String" jdbcType="VARCHAR" />
+        <result property="isblack" column="isblack" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="addID" parameterType="com.sauron.model.blacklistInfo">
+        insert into blacklist(idnum,blackname,gender,blackdate,isblack) values(
+        #{idnum,jdbcType=VARCHAR},
+        #{blackname, jdbcType=VARCHAR},
+        #{gender,jdbcType=DOUBLE},
+        #{blackdate,jdbcType=VARCHAR},
+        #{isblack,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <delete id="deleteID">
+        delete from blacklist where idnum=#{idnum}
+    </delete>
+
+    <select id="getIDsByBlacklist" resultType="java.util.HashMap">
+        SELECT * FROM blacklist t WHERE isblack=#{blacklist}
+    </select>
+</mapper>
