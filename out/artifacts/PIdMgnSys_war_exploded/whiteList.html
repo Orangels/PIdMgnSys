@@ -29,9 +29,9 @@
 
                     var vtr = "<tr class='gradeA'>";
                     //这里根据后台的数据结构填写  姓名,性别,身份证
-                    vtr+="<td style='text-align:center'>"+item.idbaseinfo+i+"</td>";
-                    vtr+="<td style='text-align:center'>"+item.gentor+"</td>";
-                    vtr+="<td style='text-align:center'>"+item.visitdate+"</td>";
+                    vtr+="<td style='text-align:center'>"+item.blackname+"</td>";
+                    vtr+="<td style='text-align:center'>"+item.gender+"</td>";
+                    vtr+="<td style='text-align:center'>"+item.idnum+"</td>";
                     vtr+="<td style='text-align:center'><a href=\"javascript:;\" onclick='{if(confirm(\"确定要删除吗?\")) {deleteCurrentRow(this); }else {}}'>删除</a></td>";
                     vtr+="</tr>";
                     $tbody.append(vtr);
@@ -111,18 +111,23 @@
             var gender = $("#model-gender").val();
             var idNum = $("#model-id").val();
 
+            $.post("http://localhost:8080/blackInsert.do",{name:name,gender:gender,idnum:idNum,isblack:0},function(result){
+                if (result == 0){
+                    var $tbody = $("#qresult");
 
-            var $tbody = $("#qresult");
+                    var vtr = "<tr class='gradeA'>";
+                    //这里根据后台的数据结构填写  姓名,性别,身份证
+                    vtr+="<td style='text-align:center'>"+name+"</td>";
+                    vtr+="<td style='text-align:center'>"+gender+"</td>";
+                    vtr+="<td style='text-align:center'>"+idNum+"</td>";
+                    vtr+="<td style='text-align:center'><a href=\"javascript:;\" onclick='{if(confirm(\"确定要删除吗?\")) {deleteCurrentRow(this); }else {}}'>删除</a></td>";
+                    vtr+="</tr>";
 
-            var vtr = "<tr class='gradeA'>";
-            //这里根据后台的数据结构填写  姓名,性别,身份证
-            vtr+="<td style='text-align:center'>"+name+"</td>";
-            vtr+="<td style='text-align:center'>"+gender+"</td>";
-            vtr+="<td style='text-align:center'>"+idNum+"</td>";
-            vtr+="<td style='text-align:center'><a href=\"javascript:;\" onclick='{if(confirm(\"确定要删除吗?\")) {deleteCurrentRow(this); }else {}}'>删除</a></td>";
-            vtr+="</tr>";
-
-            $tbody.append(vtr);
+                    $tbody.append(vtr);
+                }else {
+                    alert("添加失败");
+                }
+            });
         }
 
 
@@ -130,11 +135,19 @@
         function deleteCurrentRow(obj){
             var tr=obj.parentNode.parentNode;
             var tbody=tr.parentNode;
-            tbody.removeChild(tr);
-            //只剩行首时删除表格
-//            if(tbody.rows.length==1) {
-//                tbody.parentNode.removeChild(tbody);
-//            }
+
+            var idNum = tr.cells[2].innerHTML;
+
+            $.post("http://localhost:8080/blackDelete.do",{idNum:idNum},function(result){
+
+                if (result == 0){
+                    tbody.removeChild(tr);
+                }else {
+                    alert('删除失败');
+                }
+
+            },"json");
+
         }
 
 

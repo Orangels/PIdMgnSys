@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sauron.model.blacklistInfo;
 import com.sauron.service.HttpRequest;
 import com.sauron.service.blacklistService;
 import org.apache.log4j.Logger;
@@ -155,7 +156,7 @@ public class UIDController{
 	}
 
 
-	//黑名单查询
+	//黑名单查询 blacklist: 1: 黑名单, 0: 白名单
 	@RequestMapping(value="/blackList")
 	public void blackList(@RequestParam String blacklist, HttpServletRequest request
 			,HttpServletResponse response)
@@ -191,28 +192,84 @@ public class UIDController{
 
 	}
 
-	//白名单查询
-	@RequestMapping(value="/whiteList")
-	public void whiteList(@RequestParam(required=true) String token, HttpServletRequest request
+	//黑白名单 删除
+	@RequestMapping(value="/blackDelete")
+	public void blackDelete(@RequestParam(required=true) String idNum, HttpServletRequest request
 			,HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		// 这里做 数据库 取出 whiteList 的逻辑处理
-
-
-
+		// 这里做 数据库 删除  的逻辑处理
 		String msg = null;
 
-		try{
-			msg = "0";
-		}catch(Exception e){
-			msg = e.toString();
-			logger.error(e);
+		try {
+			blackService.deleteID(idNum);
+            msg = "0";
+		}catch (Exception e){
+            msg = e.toString();
+            logger.error(e);
 		}
+
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().print(msg);
 	}
 
+
+    //黑白名单 添加 isblack : 1 黑名单  0:白名单
+    @RequestMapping(value="/blackInsert")
+    public void blackInsert(@RequestParam(required=true) String name,
+                            @RequestParam(required=true) String gender,
+                            @RequestParam(required=true) String idnum,
+                            @RequestParam(required=true) String isblack,
+                            HttpServletRequest request
+            ,HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+
+
+        String msg = null;
+        int Jisblack = 0;
+        String contentType = request.getContentType();
+
+
+        //添加的 黑名单转换
+        if (isblack == null || isblack.isEmpty()){
+            // 默认值0,白名单
+        }else {
+            Jisblack = Integer.parseInt(new String(isblack.getBytes("ISO-8859-1"),"UTF-8"));
+        }
+
+		if (contentType.indexOf("UTF-8")!=-1){
+            // utf-8 格式
+        }else{
+            name = new String(name.getBytes("ISO-8859-1"),"UTF-8");
+            gender = new String(gender.getBytes("ISO-8859-1"),"UTF-8");
+            idnum = new String(idnum.getBytes("ISO-8859-1"),"UTF-8");
+        }
+
+
+
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        String visitdate = sdf.format(date);
+
+        blacklistInfo blackPerson = new blacklistInfo();
+        blackPerson.setIsblack(Jisblack);
+        blackPerson.setBlackdate(visitdate);
+        blackPerson.setBlackname(name);
+        blackPerson.setGender(gender);
+        blackPerson.setIdnum(idnum);
+
+        try{
+            blackService.addID(blackPerson);
+            msg = "0";
+        }catch(Exception e){
+            msg = e.toString();
+            logger.error(e);
+        }
+
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().print(msg);
+    }
 
 
 
