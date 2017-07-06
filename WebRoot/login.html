@@ -18,6 +18,12 @@
     <script src="js/jquery.min.js"></script>
 
     <script type="text/javascript">
+
+
+        var host = location.host;
+        var url = "http://"+host;
+
+
         var pageindex = 0;
         var pagecount = 4;
         $(document).ready(function() {
@@ -41,7 +47,7 @@
             $('#visitquery').ajaxSubmit(
                 {
                     type : 'post',
-                    url : 'http://localhost:8080/login.do',
+                    url : url+'/login.do',
                     dataType:'json',
                     data:{uid:$('#uid').val(),pwd:$('#pwd').val()},
                     success:function(data){

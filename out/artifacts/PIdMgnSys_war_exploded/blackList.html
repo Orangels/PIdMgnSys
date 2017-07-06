@@ -18,9 +18,13 @@
     <script src="js/jquery.min.js"></script>
 
     <script type="text/javascript">
+
+        var host = location.host;
+        var url = "http://"+host;
+
         //加载完成之后调用数据接口,加载数据
         $(document).ready(function() {
-            $.post("http://localhost:8080/blackList.do",{blacklist:1},function(result){
+            $.post(url+"/blackList.do",{blacklist:1},function(result){
 //                console.log(typeof result);
                 var $tbody = $("#qresult");
                 $.each(result,function(i,item){
@@ -111,7 +115,7 @@
             var gender = $("#model-gender").val();
             var idNum = $("#model-id").val();
 
-            $.post("http://localhost:8080/blackInsert.do",{name:name,gender:gender,idnum:idNum,isblack:1},function(result){
+            $.post(url+"/blackInsert.do",{name:name,gender:gender,idnum:idNum,isblack:1},function(result){
                 if (result == 0){
                     var $tbody = $("#qresult");
 
@@ -138,7 +142,7 @@
 
             var idNum = tr.cells[2].innerHTML;
 
-            $.post("http://localhost:8080/blackDelete.do",{idNum:idNum},function(result){
+            $.post(url+"/blackDelete.do",{idNum:idNum},function(result){
 
                 if (result == 0){
                     tbody.removeChild(tr);
